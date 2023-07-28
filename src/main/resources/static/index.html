@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html>
+    <head>
+        <title>Display Infor of Customer</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    </head>
+    <body>
+
+        <nav class="navbar navbar-expand-lg bg-body-tertiary bg-primary-subtle">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">Customer</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="btn btn-outline-success" aria-current="page" href="addCustomer.html">Add</a>
+                        </li>
+
+                    </ul>
+
+                    <form class="d-flex" id="searchForm" role="search">
+                        <input class="form-control me-2" type="search" id="searchKeyword" placeholder="Search" aria-label="Search"/>
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+
+                </div>
+            </div>
+        </nav>
+        
+        <table class="table" id="customerTable">
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Age</th>
+                <th>Money</th>
+                <th>Phone</th>
+                <th>Address</th>
+            </tr>
+        </table>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+                integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+        crossorigin="anonymous"></script>
+        
+        <script>
+            $(document).ready(function () {
+                function loadCustomers() {
+                    $.ajax({
+                        url: '/api/customers',
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (customers) {
+                            $('#customerTable tr').slice(1).remove();
+
+                            customers.forEach(function (customer) {
+                                $('#customerTable').append('<tr>' +
+                                        '<td>' + customer.customerId + '</td>' +
+                                        '<td>' + customer.name + '</td>' +
+                                        '<td>' + customer.age + '</td>' +
+                                        '<td>' + customer.money + '</td>' +
+                                        '<td>' + customer.phone + '</td>' +
+                                        '<td>' + customer.address + '</td>' +
+                                        '</tr>');
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.log('Error:', error);
+                        }
+                    });
+                }
+
+                loadCustomers();
+
+                $('#searchForm').submit(function (e) {
+                    e.preventDefault();
+
+                    var keyword = $('#searchKeyword').val();
+
+                    $.ajax({
+                        url: '/api/customers/search',
+                        type: 'GET',
+                        dataType: 'json',
+                        data: {
+                            keyword: keyword
+                        },
+                        success: function (customers) {
+                            // Xóa các dòng hiện tại trong bảng
+                            $('#customerTable tr').slice(1).remove();
+
+                            // Lặp qua danh sách sản phẩm tìm kiếm được và hiển thị thông tin
+                            customers.forEach(function (customer) {
+                                $('#customerTable').append('<tr>' +
+                                        '<td>' + customer.customerId + '</td>' +
+                                        '<td>' + customer.name + '</td>' +
+                                        '<td>' + customer.age + '</td>' +
+                                        '<td>' + customer.money + '</td>' +
+                                        '<td>' + customer.phone + '</td>' +
+                                        '<td>' + customer.address + '</td>' +
+                                        '</tr>');
+                            });
+                        },
+                        error: function (xhr, status, error) {
+                            console.log('Error:', error);
+                        }
+                    });
+                });
+            });
+        </script>
+
+    </body>
+</html>
